@@ -122,7 +122,7 @@ def model_training(data, model_choice, target_column, selected_features):
         task = "regression"
 
     # Setup PyCaret with user-selected features
-    setup_data = data[selected_features]
+    setup_data = data[selected_features + [target_column]]
         
     
     if model_choice == "Auto-Detect Best Model":
