@@ -53,18 +53,29 @@ def plot_handling(data, plot_type, x_var=None, y_var=None, hue=None):
 
 
 
-def null_handling(data, null_method):
+def null_handling(data, cat_handling, reg_handling):
     null_replacement = None
     
     for col in data.select_dtypes(include=[np.number]).columns:
-        if null_method == 'None':
-            st.info("_Select a value to replace numerical null values, **leaving it as 'None' is highly not recommended**_")
+        if cat_handling == 'None':
+            st.info("_Select a value to replace missing regression values, **leaving it as 'None' is highly not recommended**_")
             return data
-        elif null_method == 'mean':
+        elif cat_handling == 'mode':
+            null_replacement = data[col].mode().iloc[0]
+        elif cat_handling == 'additional class':
+            null_replacement = 'MISSING'
+    
+        data[col].fillna(null_replacement, inplace=True)
+    
+    for col in data.select_dtypes(include=[np.number]).columns:
+        if reg_handling == 'None':
+            st.info("_Select a value to replace missing regression values, **leaving it as 'None' is highly not recommended**_")
+            break
+        elif reg_handling == 'mean':
             null_replacement = np.mean(data[col])
-        elif null_method == 'median':
+        elif reg_handling == 'median':
             null_replacement = np.median(data[col])
-        elif null_method == 'mode':
+        elif reg_handling == 'mode':
             null_replacement = data[col].mode().iloc[0]
     
         data[col].fillna(null_replacement, inplace=True)
@@ -99,7 +110,7 @@ def encode_handling(data, encode_cat, column=None):
 
 
 # Model Training
-def model_training(data, model_choice, target_column):
+def model_training(data, model_choice, target_column, selected_features):
     # Setup PyCaret with auto target type detection
     st.write("_**conducting traing on the following data frame, please wait...**_")
     st.dataframe(data)
@@ -110,13 +121,16 @@ def model_training(data, model_choice, target_column):
     else:
         task = "regression"
 
+    # Setup PyCaret with user-selected features
+    setup_data = data[selected_features + [target_column]]
+        
     
     if model_choice == "Auto-Detect Best Model":
         # Automatically detect whether the values are classified or regressed
         if task == "classification":
-            class_setup(data=data, target=target_column)
+            class_setup(data=setup_data, target=target_column)
         else:
-            reg_setup(data=data, target=target_column)
+            reg_setup(data=setup_data, target=target_column)
         
         best_model = compare_models()
         compare_df = pull()
@@ -152,7 +166,7 @@ def model_training(data, model_choice, target_column):
         st.write(f"### Model: {model_choice}")
         st.write(f"_**Task type: '{task}'**_")
         
-        x = data.drop(target_column, axis=1)
+        x = data[selected_features]
         y = data[target_column]
         
         scaler = StandardScaler()
@@ -258,9 +272,10 @@ if file:
     columns = data.columns.tolist()
 
     # SelectSlider for setting null values for numerical data
-    st.write("### Null Replacement")
-    null_method = st.selectbox('null replacement value', options=['None', 'mean', 'median', 'mode'])
-    data = null_handling(data, null_method)
+    st.write("### Handling Messing Values")
+    cat_handling = st.selectbox('Categorical Values Replacement', options=['None', 'mode', 'additional class'])
+    reg_handling = st.selectbox('Regression Values Replacement', options=['None', 'mean', 'median', 'mode'])
+    data = null_handling(data, cat_handling, reg_handling)
     columns = data.columns.tolist()
 
 
@@ -280,13 +295,14 @@ if file:
         st.warning("Manually selecting a model might lead to problems, "
             + "as not all models will perform well on all data, use Auto-Detect for best results.")
 
-    # Dropdown for target variable selection
-    target_column = st.selectbox('Target Column', options=[None] + columns)
+    # Dropdowns for target selection
+    selected_features = st.multiselect('Target Features (X)', options=data.columns)
+    target_column = st.selectbox('Target Variable (Y)', options=[None] + columns)
     
     # Button to trigger model training
     if st.button('Train Model'):
         if target_column:
-            final_model = model_training(data, model_choice, target_column)
+            final_model = model_training(data, model_choice, target_column, selected_features)
             
             st.divider()
             st.write("### Thank you for using my App!")
