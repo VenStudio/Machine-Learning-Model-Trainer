@@ -13,15 +13,15 @@ This project aims to simplify the machine learning workflow using PyCaret, an op
 
 ## Installation
 1. Clone the repository
-2. Make sure you have streamlit downloaded, if not, on your console, run this command in your console: `!pip install streamlit`
-3. This project also uses pandas, numpy, sklearn, matplotlib, seaborn, and pycaret.
-   - if you don't have them downloaded or want to check if you do, run this command in your console: `!pip install [library name]`
+2. **Insure you have streamlit downloaded**, if not, run this command in the console: `!pip install streamlit`
+3. **Insure you have pandas, numpy, sklearn, matplotlib, seaborn, and pycaret downloaded as well**.
+   - if you don't have them downloaded or want to check if you do, run this command in your console and change [library name] with the library you want to check: `!pip install [library name]`
 
 ### How to use
 1. Through your console, navigate to the project directory: `cd [prject dicrectory on your device]`
 2. Run the Streamlit app through your console: `streamlit run "Machine Learning Model Trainer.py"`
 3. Upload your dataset.
-4. Perform EDA, preprocess data, and select the target variable.
+4. Perform EDA, preprocess data, and select the X and Y variables.
 5. Choose the model training method: Auto-Detect Best Model or select a model manually.
 6. Train the model and evaluate its performance.
 7. Explore the results.
