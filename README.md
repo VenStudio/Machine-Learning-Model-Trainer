@@ -29,7 +29,7 @@ This project aims to simplify the machine learning workflow using PyCaret, an op
 ## Contributors
 **This project was made by**
 
-[Omar (Ven)](https://github.com/your-username)
+[Omar (Ven)](https://github.com/VenStudio)
 
 *This project was made for a course from [ElectoPI](https://electropi.ai/)*
 
