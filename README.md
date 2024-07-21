@@ -31,7 +31,7 @@ This project aims to simplify the machine learning workflow using PyCaret, an op
 
 [Omar (Ven)](https://github.com/VenStudio)
 
-*This project was made for a course from [ElectoPI](https://electropi.ai/)*
+*This project was made for a course from [ElectoPI](https://alcamp.electropi.ai/)*
 
 ## License
 This project is licensed under the CC0 License - see the [LICENSE](LICENSE) file for details.
